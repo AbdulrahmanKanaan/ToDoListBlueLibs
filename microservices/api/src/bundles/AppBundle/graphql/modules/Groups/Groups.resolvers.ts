@@ -26,6 +26,7 @@ export default {
         X.ToModel(GroupUpdateInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.CheckDocumentExists(GroupsCollection),
+        // @ts-ignore
         X.ToDocumentUpdateByID(GroupsCollection, null, ({ document }) => ({
           $set: document,
         })),

@@ -26,6 +26,7 @@ export default {
         X.ToModel(UserUpdateInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.CheckDocumentExists(UsersCollection),
+        // @ts-ignore
         X.ToDocumentUpdateByID(UsersCollection, null, ({ document }) => ({
           $set: document,
         })),
