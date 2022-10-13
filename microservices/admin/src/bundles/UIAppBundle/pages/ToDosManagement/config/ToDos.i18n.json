@@ -1,0 +1,37 @@
+{
+  "en": {
+    "management": {
+      "to_dos": {
+        "fields": {
+          "_id": "ID",
+          "content": "Content",
+          "order": "Order",
+          "isDone": "Is Done",
+          "groupId": "groupId",
+          "userId": "userId",
+          "group": "Group",
+          "user": "User"
+        },
+        "menu": {
+          "title": "ToDos"
+        },
+        "list": {
+          "header": "ToDos List",
+          "create_btn": "New ToDo"
+        },
+        "create": {
+          "header": "Create ToDo"
+        },
+        "edit": {
+          "header": "Edit ToDo"
+        },
+        "view": {
+          "header": "View ToDo"
+        },
+        "delete_confirmation": "You have deleted the ToDo",
+        "create_confirmation": "You successfully added a new ToDo",
+        "edit_confirmation": "You successfully edited the ToDo"
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "en": {
+    "management": {
+      "groups": {
+        "fields": {
+          "_id": "ID",
+          "title": "Title",
+          "userId": "userId",
+          "todos": "Todos",
+          "user": "User"
+        },
+        "menu": {
+          "title": "Groups"
+        },
+        "list": {
+          "header": "Groups List",
+          "create_btn": "New Group"
+        },
+        "create": {
+          "header": "Create Group"
+        },
+        "edit": {
+          "header": "Edit Group"
+        },
+        "view": {
+          "header": "View Group"
+        },
+        "delete_confirmation": "You have deleted the Group",
+        "create_confirmation": "You successfully added a new Group",
+        "edit_confirmation": "You successfully edited the Group"
+      }
+    }
+  }
+}
