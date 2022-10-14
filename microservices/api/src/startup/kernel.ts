@@ -15,6 +15,7 @@ import { XS3Bundle } from "@bluelibs/x-s3-bundle";
 import { UsersCollection } from "../bundles/AppBundle/collections";
 
 import env from "./env";
+import { AuthService } from "@bundles/AppBundle/services";
 
 export const kernel = new Kernel({
   parameters: {
@@ -45,7 +46,15 @@ export const kernel = new Kernel({
     }),
     new EmailBundle(),
     new PasswordBundle(),
-    new XAuthBundle(),
+    new XAuthBundle({
+      services: {
+        XAuthService: AuthService,
+      },
+      emails: {
+        sendEmailVerification: false,
+        sendWelcomeEmail: false,
+      },
+    }),
     new XS3Bundle({
       accessKeyId: env.AWS_ACCESS_KEY_ID,
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
