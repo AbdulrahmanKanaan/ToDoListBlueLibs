@@ -27,9 +27,6 @@ type FormInput = {
 
 export function Login() {
   const guardian = useGuardian();
-  useAuthRedirect({
-    isAuthPage: true,
-  });
 
   const tl = useTranslate("authentication.login");
   const router = useRouter();

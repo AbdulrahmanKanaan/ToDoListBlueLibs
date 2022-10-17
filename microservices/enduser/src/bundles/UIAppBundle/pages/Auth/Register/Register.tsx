@@ -27,7 +27,6 @@ type FormInput = {
 };
 
 export function Register() {
-  useAuthRedirect({ isAuthPage: true });
   const guardian = useGuardian();
   const router = useRouter();
   const tl = useTranslate("authentication.register");

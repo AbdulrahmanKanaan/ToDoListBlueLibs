@@ -9,7 +9,7 @@ import {
 import { Row, Col, Card, PageHeader, message } from "antd";
 import { ToDo } from "@root/api.types";
 
-export const HomePage = (props) => {
+export const ToDos = () => {
   const [todos, setTodos] = useState<ToDo[]>([]);
 
   const handleFormSubmit = (todo: any): void => {

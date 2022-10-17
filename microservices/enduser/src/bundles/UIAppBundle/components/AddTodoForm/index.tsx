@@ -28,7 +28,7 @@ const AddTodoForm: React.FC<IAddTodoFormProps> = ({ onFormSubmit }) => {
       className="todo-form"
     >
       <Row gutter={20}>
-        <Col xs={24} sm={24} md={17} lg={19} xl={20}>
+        <Col span={20}>
           <Form.Item
             name={"name"}
             rules={[{ required: true, message: "This field is required" }]}
@@ -36,7 +36,7 @@ const AddTodoForm: React.FC<IAddTodoFormProps> = ({ onFormSubmit }) => {
             <Input placeholder="What needs to be done?" />
           </Form.Item>
         </Col>
-        <Col xs={24} sm={24} md={7} lg={5} xl={4}>
+        <Col span={4}>
           <Button type="primary" htmlType="submit" block>
             <PlusCircleFilled />
             Add todo

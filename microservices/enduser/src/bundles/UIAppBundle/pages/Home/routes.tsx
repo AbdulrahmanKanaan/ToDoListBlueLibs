@@ -1,7 +1,8 @@
 import { IRoute } from "@bluelibs/x-ui";
+import { withAuthRedirect } from "@bundles/UIAppBundle/hoc";
 import { HomePage as Home } from "./Home";
 
 export const HOME: IRoute = {
-  path: "/",
-  component: Home,
+  path: "/home",
+  component: withAuthRedirect(Home),
 };
