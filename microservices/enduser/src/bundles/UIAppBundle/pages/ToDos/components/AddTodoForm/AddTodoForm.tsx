@@ -1,9 +1,8 @@
-import React from "react";
-import { Form, Row, Col, Button, Input } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
+import { Button, Col, Form, Input, Row } from "antd";
+import React from "react";
 
-import "./styles.scss";
-import { ToDo } from "@root/api.types";
+import "./AddTodoForm.scss";
 
 interface IAddTodoFormProps {
   onFormSubmit: (todo: { name: string }) => void;

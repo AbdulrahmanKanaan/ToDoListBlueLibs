@@ -9,7 +9,12 @@ export default {
     [],
     {
       ToDosFindOne: [X.ToNovaOne(ToDosCollection)],
-      ToDosFind: [X.ToNova(ToDosCollection)],
+      ToDosFind: [
+        (_, args, ctx) => {
+          console.log(args);
+        },
+        X.ToNova(ToDosCollection),
+      ],
       ToDosCount: [X.ToCollectionCount(ToDosCollection)],
     },
   ],

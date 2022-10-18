@@ -1,32 +1,17 @@
-import React, { useState } from "react";
-import useAuthRedirect from "@bundles/UIAppBundle/hooks/useAuthRedirect";
-import {
-  AddTodoForm,
-  TodoItem,
-  TodoList,
-} from "@bundles/UIAppBundle/components";
+import { useEffect, useState } from "react";
 
-import { Row, Col, Card, PageHeader, message } from "antd";
+import { newSmart, smart } from "@bluelibs/smart";
+import { HeaderTitle, Spinner } from "@bundles/UIAppBundle/components";
 import { ToDo } from "@root/api.types";
+import { Card, Col, message, Row } from "antd";
+import { TodoList } from "./components";
+import { ToDoModel } from "./models";
 
-export const ToDos = () => {
+const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
   const [todos, setTodos] = useState<ToDo[]>([]);
 
   const handleFormSubmit = (todo: any): void => {
     message.success("Todo added!");
-    setTodos((oldToDos) => [
-      ...oldToDos,
-      {
-        content: todo.name,
-        isDone: false,
-        order: 1,
-        group: null,
-        groupId: null,
-        user: null,
-        userId: null,
-        _id: Math.random(),
-      },
-    ]);
   };
 
   const handleRemoveTodo = (todo: ToDo): void => {
@@ -37,56 +22,40 @@ export const ToDos = () => {
     message.info("Todo state updated!");
   };
 
+  const [api] = newSmart(ToDoModel);
+
+  const { state } = api;
+
+  useEffect(() => {
+    api.fetchToDos(groupId);
+  }, [api, groupId]);
+
   return (
     <>
+      <HeaderTitle title="😆 AMAZING TO DO LIST 😆" />
+      <br />
       <Row
         justify="center"
         align="middle"
         gutter={[0, 20]}
         className="todos-container"
       >
-        <Col
-          xs={{ span: 23 }}
-          sm={{ span: 23 }}
-          md={{ span: 21 }}
-          lg={{ span: 20 }}
-          xl={{ span: 18 }}
-        >
-          <PageHeader
-            title="Add Todo"
-            subTitle="To add a todo, just fill the form below and click in add todo."
-          />
-        </Col>
-
-        <Col
-          xs={{ span: 23 }}
-          sm={{ span: 23 }}
-          md={{ span: 21 }}
-          lg={{ span: 20 }}
-          xl={{ span: 18 }}
-        >
-          <Card title="Create a new todo">
-            <AddTodoForm onFormSubmit={handleFormSubmit} />
-          </Card>
-        </Col>
-
-        <Col
-          xs={{ span: 23 }}
-          sm={{ span: 23 }}
-          md={{ span: 21 }}
-          lg={{ span: 20 }}
-          xl={{ span: 18 }}
-        >
-          <Card title="Todo List">
-            <TodoList
-              todos={todos}
-              onTodoRemoval={handleRemoveTodo}
-              onTodoToggle={handleToggleTodoStatus}
-            />
+        <Col span={18}>
+          <Card title="To Do List">
+            {state.loading ? (
+              <Spinner spinning tip={"Loading todos"} />
+            ) : (
+              <TodoList
+                todos={state.todos}
+                onTodoRemoval={console.log}
+                onTodoToggle={console.log}
+              />
+            )}
           </Card>
         </Col>
       </Row>
-      );
     </>
   );
 };
+
+export default smart(ToDoModel)(ToDos);

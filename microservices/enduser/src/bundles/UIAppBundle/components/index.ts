@@ -1,5 +1,4 @@
-import AddTodoForm from "./AddTodoForm";
-import TodoItem from "./TodoItem";
-import TodoList from "./TodoList";
+import { HeaderTitle } from "./HeaderTitle/HeaderTitle";
+import Spinner from "./Spinner/Spinner";
 
-export { AddTodoForm, TodoItem, TodoList };
+export { Spinner, HeaderTitle };

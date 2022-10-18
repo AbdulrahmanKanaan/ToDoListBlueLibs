@@ -1,31 +1,40 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { AddTodoForm, TodoList } from "@bundles/UIAppBundle/components";
+import React from "react";
 
-import { Row, Col, Card, PageHeader, message, Space } from "antd";
-import { ToDo } from "@root/api.types";
-import { use, useData } from "@bluelibs/x-ui";
+import { use, useData, useRouter } from "@bluelibs/x-ui";
 import { GroupsCollection } from "@bundles/UIAppBundle/collections";
+import { HeaderTitle, Spinner } from "@bundles/UIAppBundle/components";
 import { useAppGuardian } from "@bundles/UIAppBundle/services/AppGuardian";
+import { Group, ToDo } from "@root/api.types";
+import { Card, Col, message, Row } from "antd";
+import { TODOS } from "../routes";
+import { AddGroupForm, GroupsList } from "./components";
+
+type AddGroupFormProps = React.ComponentProps<typeof AddGroupForm>;
 
 export const Groups = () => {
-  const [todos, setTodos] = useState<ToDo[]>([]);
+  const router = useRouter();
+  const groupsCollection = use(GroupsCollection);
 
-  const handleFormSubmit = (todo: any): void => {
-    message.success("Todo added!");
-    setTodos((oldToDos) => [
-      ...oldToDos,
-      {
-        content: todo.name,
-        isDone: false,
-        order: 1,
-        group: null,
-        groupId: null,
-        user: null,
-        userId: null,
-        _id: Math.random(),
-      },
-    ]);
+  const {
+    state: { user },
+  } = useAppGuardian();
+
+  const { data, error, isLoading } = useData(
+    GroupsCollection,
+    {},
+    { _id: 1, title: 1 }
+  );
+
+  const handleFormSubmit: AddGroupFormProps["onFormSubmit"] = async (group) => {
+    groupsCollection
+      .insertOne({
+        title: group.title,
+        userId: user._id,
+        // userId: "6348434c082a12f8367e27f9",
+        // userId: "63499d743872b36cbc0dcd81",
+      })
+      .then((res) => message.success("Group added!"))
+      .catch((err) => message.error(err.message));
   };
 
   const handleRemoveTodo = (todo: ToDo): void => {
@@ -36,34 +45,19 @@ export const Groups = () => {
     message.info("Todo state updated!");
   };
 
-  const {
-    state: { user },
-  } = useAppGuardian();
-
-  const { data, error, isLoading } = useData(
-    GroupsCollection,
-    {
-      filters: {
-        userId: user?._id,
-      },
-    },
-    { _id: 1, title: 1, userId: 1 }
-  );
+  const onGroupPress = (groupId: string) => {
+    router.go(TODOS, { params: { id: groupId } });
+  };
 
   return (
     <>
+      <HeaderTitle title="😆 AMAZING TO DO LIST 😆" />
+      <br />
       <Row justify="center">
         <Col span={18}>
-          <Space direction="vertical" style={{ width: "100%" }}>
-            <PageHeader
-              title="Create Group"
-              // subTitle="To add a todo, just fill the form below and click in add todo."
-            />
-
-            <Card title="Create a new todo">
-              <AddTodoForm onFormSubmit={handleFormSubmit} />
-            </Card>
-          </Space>
+          <Card title="Create a new group">
+            <AddGroupForm onFormSubmit={handleFormSubmit} />
+          </Card>
         </Col>
       </Row>
       <br />
@@ -74,12 +68,15 @@ export const Groups = () => {
         className="todos-container"
       >
         <Col span={18}>
-          <Card title="Todo List">
-            <TodoList
-              todos={todos}
-              onTodoRemoval={handleRemoveTodo}
-              onTodoToggle={handleToggleTodoStatus}
-            />
+          <Card title="Groups List">
+            {isLoading ? (
+              <Spinner spinning tip={"Loading groups"} />
+            ) : (
+              <GroupsList
+                groups={data as Group[]}
+                onGroupPress={onGroupPress}
+              />
+            )}
           </Card>
         </Col>
       </Row>

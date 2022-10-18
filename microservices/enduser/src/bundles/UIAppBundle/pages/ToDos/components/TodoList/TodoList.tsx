@@ -18,7 +18,7 @@ const TodoList: React.FC<ToDoListProps> = ({
 }) => (
   <List
     locale={{
-      emptyText: "There's nothing to do :(",
+      emptyText: "There's nothing to do 😖",
     }}
     dataSource={todos}
     renderItem={(todo) => (
@@ -28,10 +28,6 @@ const TodoList: React.FC<ToDoListProps> = ({
         onTodoRemoval={onTodoRemoval}
       />
     )}
-    pagination={{
-      position: "bottom",
-      pageSize: 10,
-    }}
   />
 );
 

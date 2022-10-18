@@ -2,6 +2,8 @@ import * as X from "@bluelibs/x-bundle";
 import { IResolverMap } from "@bluelibs/graphql-bundle";
 import { GroupInsertInput, GroupUpdateInput } from "../../../services/inputs";
 import { GroupsCollection } from "../../../collections/Groups/Groups.collection";
+import { GroupService } from "@bundles/AppBundle/services/Group.service";
+import * as E from "@bundles/AppBundle/executors";
 
 true;
 export default {
@@ -9,7 +11,16 @@ export default {
     [],
     {
       GroupsFindOne: [X.ToNovaOne(GroupsCollection)],
-      GroupsFind: [X.ToNova(GroupsCollection)],
+      // GroupsFind: [
+      //   X.ToNova(GroupsCollection, (_, args, ctx, info) => ({
+      //     filters: {
+      //       userId: ctx.userId,
+      //     },
+      //   })),
+      // ],
+      GroupsFind: [
+        X.ToService(GroupService, "find", (args, ctx) => [args, ctx.userId]),
+      ],
       GroupsCount: [X.ToCollectionCount(GroupsCollection)],
     },
   ],
@@ -17,6 +28,7 @@ export default {
     [],
     {
       GroupsInsertOne: [
+        E.validateInsertion({ message: "Cannot add a group for another user" }),
         X.ToModel(GroupInsertInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.ToDocumentInsert(GroupsCollection),

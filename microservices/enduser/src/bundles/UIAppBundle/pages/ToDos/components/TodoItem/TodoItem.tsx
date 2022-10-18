@@ -1,9 +1,9 @@
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Button, List, Popconfirm, Switch, Tag, Tooltip } from "antd";
 import React from "react";
-import { Tooltip, Tag, List, Button, Popconfirm, Switch } from "antd";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 
-import "./styles.scss";
 import { ToDo } from "@root/api.types";
+import "./TodoItem.scss";
 
 interface ITodoItemProps {
   todo: ToDo;

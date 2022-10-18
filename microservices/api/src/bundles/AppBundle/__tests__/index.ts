@@ -1,3 +1,4 @@
+import "./Group.service.test.ts";
 import "./Auth.service.test.ts";
 // import { container } from "../../../__tests__/ecosystem";
 
