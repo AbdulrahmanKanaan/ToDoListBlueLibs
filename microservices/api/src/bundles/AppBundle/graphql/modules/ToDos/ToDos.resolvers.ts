@@ -2,6 +2,7 @@ import * as X from "@bluelibs/x-bundle";
 import { IResolverMap } from "@bluelibs/graphql-bundle";
 import { ToDoInsertInput, ToDoUpdateInput } from "../../../services/inputs";
 import { ToDosCollection } from "../../../collections/ToDos/ToDos.collection";
+import { ToDoService } from "@bundles/AppBundle/services";
 
 true;
 export default {
@@ -41,6 +42,7 @@ export default {
         X.CheckDocumentExists(ToDosCollection),
         X.ToDocumentDeleteByID(ToDosCollection),
       ],
+      ToDoReorder: [X.ToService(ToDoService, "reorder")],
     },
   ],
   Subscription: {

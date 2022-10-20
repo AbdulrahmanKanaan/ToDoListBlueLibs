@@ -9,6 +9,7 @@ export default /* GraphQL */ `
     ToDosInsertOne(document: ToDoInsertInput!): ToDo
     ToDosUpdateOne(_id: ObjectId!, document: ToDoUpdateInput!): ToDo!
     ToDosDeleteOne(_id: ObjectId!): Boolean
+    ToDoReorder(input: ToDoReorderInput!): ToDo
   }
 
   type Subscription {

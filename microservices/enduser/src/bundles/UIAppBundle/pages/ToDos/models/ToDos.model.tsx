@@ -3,8 +3,10 @@ import { Smart } from "@bluelibs/smart";
 import { ToDo } from "@root/api.types";
 import { Inject } from "@bluelibs/core";
 import { ToDosCollection } from "@bundles/UIAppBundle/collections";
-import { GuardianSmart } from "@bluelibs/x-ui";
+import { ApolloClient, GuardianSmart } from "@bluelibs/x-ui";
 import { ObjectId } from "@bluelibs/ejson";
+import { PositionMovement } from "@bundles/UIAppBundle/types";
+import { gql } from "@apollo/client";
 
 interface IState {
   todos: ToDo[];
@@ -29,6 +31,9 @@ export default class ToDoModel extends Smart<IState> {
 
   @Inject()
   todoCollection: ToDosCollection;
+
+  @Inject()
+  client: ApolloClient;
 
   @Inject()
   guardian: GuardianSmart;
@@ -97,6 +102,28 @@ export default class ToDoModel extends Smart<IState> {
     await this.todoCollection.updateOne(ID, {
       $set: {
         isDone: !todo.isDone,
+      },
+    });
+  }
+
+  public async sortTodo(todo: ToDo, position: PositionMovement): Promise<void> {
+    const ID = new ObjectId(todo._id);
+    const mutation = gql`
+      mutation ToDoReorder($input: ToDoReorderInput!) {
+        ToDoReorder(input: $input) {
+          _id
+          content
+        }
+      }
+    `;
+    this.client.mutate({
+      mutation,
+      variables: {
+        input: {
+          todoId: ID,
+          old: position.old,
+          new: position.new,
+        },
       },
     });
   }

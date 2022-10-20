@@ -6,6 +6,7 @@ import { ToDo } from "@root/api.types";
 import { Card, Col, message, Row } from "antd";
 import { AddTodoForm, TodoList } from "./components";
 import { ToDoModel } from "./models";
+import { PositionMovement } from "@bundles/UIAppBundle/types";
 
 const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
   const [api] = newSmart(ToDoModel);
@@ -40,6 +41,13 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
       .catch(() => message.error("Couldn't update todo status :("));
   };
 
+  const handleTodoSort = async (
+    todo: ToDo,
+    position: PositionMovement
+  ): Promise<void> => {
+    await api.sortTodo(todo, position);
+  };
+
   useEffect(() => {
     api.fetchToDos(groupId);
   }, [api, groupId]);
@@ -68,6 +76,7 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
                   todos={todos}
                   onTodoRemoval={handleRemoveTodo}
                   onTodoToggle={handleToggleTodoStatus}
+                  onTodoSort={handleTodoSort}
                 />
                 <AddTodoForm onFormSubmit={handleAddTodo} />
               </>
