@@ -29,8 +29,8 @@ const GroupsList: React.FC<Props> = ({ groups, onGroupPress }) => {
         setList={setGroupsList}
         onSort={onSortDone}
         className="grid-container"
-        ghostClass="dropArea"
-        handle=".dragHandle"
+        ghostClass="group-drop-area"
+        handle=".drag-handle"
         animation={200}
         onChoose={() => setIsDragging(true)}
         onUnchoose={() => setIsDragging(false)}

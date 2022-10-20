@@ -12,11 +12,16 @@ const Spinner: React.FunctionComponent<ISpinnerProps> = ({
   spinning = true,
   tip,
   size,
+  children,
 }) => {
+  console.log(children);
+
   return (
     <>
       <div className="spinner-container">
-        <Spin spinning={spinning} tip={tip} size={size} />
+        <Spin spinning={spinning} tip={tip} size={size}>
+          {children}
+        </Spin>
       </div>
     </>
   );

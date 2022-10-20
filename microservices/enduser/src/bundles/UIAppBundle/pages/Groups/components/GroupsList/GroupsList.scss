@@ -4,11 +4,11 @@
   grid-template-columns: repeat(3, auto)
 }
 
-.dropArea {
+.group-drop-area {
   position: relative;
 }
 
-.dropArea::before {
+.group-drop-area::before {
   content: "";
   position: absolute;
   z-index: 1;

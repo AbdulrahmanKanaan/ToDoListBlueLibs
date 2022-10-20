@@ -1,16 +1,23 @@
 .list-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 10px;
+  border: #ebebeb solid 1px;
 
-  .todo-item {
-    display: flex;
-    align-items: center;
+  &_checked {
+    border-color: green;
+    border-width: 1px;
+    border-left-width: 7px;
+    border-radius: 3px;
+    text-decoration: line-through;
+  }
 
-    .todo-tag {
-      margin: 10px;
-      white-space: normal !important;
-      max-width: 115px;
-      word-break: break-all;
-    }
+  &_unchecked {
+    border-color: red;
+    border-width: 1px;
+    border-left-width: 7px;
+    border-radius: 3px;
   }
 }

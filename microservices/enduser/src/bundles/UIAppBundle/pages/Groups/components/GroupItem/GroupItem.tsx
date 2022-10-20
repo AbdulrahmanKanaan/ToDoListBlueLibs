@@ -22,7 +22,7 @@ const GroupItem: React.FunctionComponent<Props> = ({
         actions={[
           // <EyeOutlined key="view" onClick={onPress} />,
           <EditOutlined key="edit" />,
-          <DragOutlined key="drag" className="dragHandle" />,
+          <DragOutlined key="drag" className="drag-handle" />,
         ]}
         bodyStyle={{ flexGrow: 1 }}
         style={{ display: "flex", flexDirection: "column" }}
