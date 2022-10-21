@@ -3,6 +3,7 @@ import { IResolverMap } from "@bluelibs/graphql-bundle";
 import { ToDoInsertInput, ToDoUpdateInput } from "../../../services/inputs";
 import { ToDosCollection } from "../../../collections/ToDos/ToDos.collection";
 import { ToDoService } from "@bundles/AppBundle/services";
+import * as E from "@bundles/AppBundle/executors";
 
 true;
 export default {
@@ -23,6 +24,7 @@ export default {
     [],
     {
       ToDosInsertOne: [
+        E.validateInsertion({ message: "Cannot insert for another user" }),
         X.ToModel(ToDoInsertInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.ToDocumentInsert(ToDosCollection),

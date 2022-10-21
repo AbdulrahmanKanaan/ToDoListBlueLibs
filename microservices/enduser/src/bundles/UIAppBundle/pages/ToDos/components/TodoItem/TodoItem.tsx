@@ -21,7 +21,10 @@ const TodoItem: React.FC<ITodoItemProps> = ({
 
   const deleteTodo = () => {
     setLoading(true);
-    onTodoRemoval(todo);
+    onTodoRemoval(todo).catch((err) => {
+      console.log(err);
+      setLoading(false);
+    });
   };
 
   const toggleTodo = () => {

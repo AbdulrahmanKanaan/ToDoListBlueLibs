@@ -28,17 +28,23 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
   };
 
   const handleRemoveTodo = async (todo: ToDo): Promise<void> => {
-    await api
-      .deleteToDo(todo)
-      .then(() => message.warn("Todo removed!"))
-      .catch((err) => message.error("Couldn't delete todo item :("));
+    try {
+      await api.deleteToDo(todo);
+      message.warn("Todo removed!");
+    } catch (error) {
+      message.error("Couldn't delete todo item :(");
+      throw error;
+    }
   };
 
   const handleToggleTodoStatus = async (todo: ToDo): Promise<void> => {
-    await api
-      .toggleToDo(todo)
-      .then(() => message.info("Todo state updated!"))
-      .catch(() => message.error("Couldn't update todo status :("));
+    try {
+      await api.toggleToDo(todo);
+      message.info("Todo state updated!");
+    } catch (err) {
+      message.error("Couldn't update todo status :(");
+      throw err;
+    }
   };
 
   const handleTodoSort = async (
