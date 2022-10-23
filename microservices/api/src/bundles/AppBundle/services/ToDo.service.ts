@@ -21,7 +21,7 @@ export class ToDoService {
     const todoCollection = this.container.get(ToDosCollection);
 
     if (oldIndex < newIndex) {
-      const todosToDecrement = await todoCollection.updateMany(
+      await todoCollection.updateMany(
         {
           order: {
             $gt: oldIndex,
@@ -34,9 +34,8 @@ export class ToDoService {
           },
         }
       );
-      console.log(todosToDecrement);
     } else if (oldIndex > newIndex) {
-      const todosToIncrement = await todoCollection.updateMany(
+      await todoCollection.updateMany(
         {
           order: {
             $gte: newIndex,
@@ -49,7 +48,6 @@ export class ToDoService {
           },
         }
       );
-      console.log("TODO INC", todosToIncrement);
     }
 
     await todoCollection.updateOne(

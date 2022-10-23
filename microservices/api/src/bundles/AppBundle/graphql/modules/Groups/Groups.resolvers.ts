@@ -28,7 +28,7 @@ export default {
     [],
     {
       GroupsInsertOne: [
-        E.validateInsertion({ message: "Cannot add a group for another user" }),
+        E.AuthorizeInsertion({ message: "Cannot add a group for another user" }),
         X.ToModel(GroupInsertInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.ToDocumentInsert(GroupsCollection),

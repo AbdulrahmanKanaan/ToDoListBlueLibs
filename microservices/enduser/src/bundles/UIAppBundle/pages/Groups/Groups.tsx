@@ -2,10 +2,10 @@ import React from "react";
 
 import { use, useData, useRouter } from "@bluelibs/x-ui";
 import { GroupsCollection } from "@bundles/UIAppBundle/collections";
-import { HeaderTitle, Spinner } from "@bundles/UIAppBundle/components";
+import { HeaderTitle, Layout, Spinner } from "@bundles/UIAppBundle/components";
 import { useAppGuardian } from "@bundles/UIAppBundle/services/AppGuardian";
 import { Group, ToDo } from "@root/api.types";
-import { Card, Col, message, Row } from "antd";
+import { Card, Col, message, Row, Space } from "antd";
 import { TODOS } from "../routes";
 import { AddGroupForm, GroupsList } from "./components";
 
@@ -51,23 +51,12 @@ export const Groups = () => {
 
   return (
     <>
-      <HeaderTitle title="😆 AMAZING TO DO LIST 😆" />
-      <br />
-      <Row justify="center">
-        <Col span={18}>
+      <Layout>
+        <Space direction="vertical" style={{ width: "100%" }} size="large">
+          <HeaderTitle title="😆 AMAZING TO DO LIST 😆" />
           <Card title="Create a new group">
             <AddGroupForm onFormSubmit={handleFormSubmit} />
           </Card>
-        </Col>
-      </Row>
-      <br />
-      <Row
-        justify="center"
-        align="middle"
-        gutter={[0, 20]}
-        className="todos-container"
-      >
-        <Col span={18}>
           <Card title="Groups List">
             {isLoading ? (
               <Spinner spinning tip={"Loading groups"} />
@@ -78,9 +67,8 @@ export const Groups = () => {
               />
             )}
           </Card>
-        </Col>
-      </Row>
-      );
+        </Space>
+      </Layout>
     </>
   );
 };

@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { newSmart, smart } from "@bluelibs/smart";
-import { HeaderTitle, Spinner } from "@bundles/UIAppBundle/components";
+import { HeaderTitle, Layout, Spinner } from "@bundles/UIAppBundle/components";
 import { ToDo } from "@root/api.types";
-import { Card, Col, message, Row } from "antd";
+import { Button, Card, Col, message, Row, Space } from "antd";
 import { AddTodoForm, TodoList } from "./components";
 import { ToDoModel } from "./models";
 import { PositionMovement } from "@bundles/UIAppBundle/types";
+import { useRouter } from "@bluelibs/x-ui";
+import { GROUPS } from "../routes";
 
 const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
+  const router = useRouter();
+
   const [api] = newSmart(ToDoModel);
 
   const { loading, insertLoading, todos } = api.state;
@@ -23,8 +27,12 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
       groupId,
       isDone: false,
     };
-    await api.createToDo(todo);
-    message.success("Todo added!");
+    try {
+      await api.createToDo(todo);
+      message.success("Todo added!");
+    } catch (error) {
+      message.error(error.message);
+    }
   };
 
   const handleRemoveTodo = async (todo: ToDo): Promise<void> => {
@@ -64,15 +72,10 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
 
   return (
     <>
-      <HeaderTitle title="😆 AMAZING TO DO LIST 😆" />
-      <br />
-      <Row
-        justify="center"
-        align="middle"
-        gutter={[0, 20]}
-        className="todos-container"
-      >
-        <Col span={18}>
+      <Layout>
+        <Space direction="vertical" size={"large"} style={{ width: "100%" }}>
+          <HeaderTitle title="😆 AMAZING TO DO LIST 😆" />
+          <Button onClick={() => router.go(GROUPS)}>Return To Groups</Button>
           <Card title="To Do List">
             {loading ? (
               <Spinner spinning tip={"Loading todos"} />
@@ -88,8 +91,8 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
               </>
             )}
           </Card>
-        </Col>
-      </Row>
+        </Space>
+      </Layout>
     </>
   );
 };

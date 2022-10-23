@@ -2,7 +2,7 @@ import * as X from "@bluelibs/x-bundle";
 import { IResolverMap } from "@bluelibs/graphql-bundle";
 import { ToDoInsertInput, ToDoUpdateInput } from "../../../services/inputs";
 import { ToDosCollection } from "../../../collections/ToDos/ToDos.collection";
-import { ToDoService } from "@bundles/AppBundle/services";
+import { ToDoAuthorizeService, ToDoService } from "@bundles/AppBundle/services";
 import * as E from "@bundles/AppBundle/executors";
 
 true;
@@ -11,12 +11,7 @@ export default {
     [],
     {
       ToDosFindOne: [X.ToNovaOne(ToDosCollection)],
-      ToDosFind: [
-        (_, args, ctx) => {
-          console.log(args);
-        },
-        X.ToNova(ToDosCollection),
-      ],
+      ToDosFind: [X.ToNova(ToDosCollection)],
       ToDosCount: [X.ToCollectionCount(ToDosCollection)],
     },
   ],
@@ -24,7 +19,7 @@ export default {
     [],
     {
       ToDosInsertOne: [
-        E.validateInsertion({ message: "Cannot insert for another user" }),
+        E.AuthorizeInsertion({ message: "Cannot insert for another user" }),
         X.ToModel(ToDoInsertInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.ToDocumentInsert(ToDosCollection),
@@ -34,6 +29,7 @@ export default {
         X.ToModel(ToDoUpdateInput, { field: "document" }),
         X.Validate({ field: "document" }),
         X.CheckDocumentExists(ToDosCollection),
+        E.AuthorizeMutation(ToDosCollection),
         // @ts-ignore
         X.ToDocumentUpdateByID(ToDosCollection, null, ({ document }) => ({
           $set: document,
@@ -42,9 +38,17 @@ export default {
       ],
       ToDosDeleteOne: [
         X.CheckDocumentExists(ToDosCollection),
+        E.AuthorizeMutation(ToDosCollection),
         X.ToDocumentDeleteByID(ToDosCollection),
       ],
-      ToDoReorder: [X.ToService(ToDoService, "reorder")],
+      ToDoReorder: [
+        X.CheckDocumentExists(ToDosCollection, (args) => args.input.todoId),
+        E.AuthorizeMutation(ToDosCollection, {
+          idResolver: (args) => args.input.todoId,
+          message: "you don't have permissions to sort this list!",
+        }),
+        X.ToService(ToDoService, "reorder"),
+      ],
     },
   ],
   Subscription: {

@@ -1,3 +1,5 @@
+import "./GroupAuthorize.service.test.ts";
+import "./ToDoAuthorize.service.test.ts";
 import "./ToDo.service.test.ts";
 import "./Group.service.test.ts";
 import "./Auth.service.test.ts";
