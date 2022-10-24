@@ -38,12 +38,12 @@ export default class ToDoModel extends Smart<IState> {
   @Inject()
   guardian: GuardianSmart;
 
-  public async fetchToDos(groupId: string): Promise<void> {
+  public async fetchToDos(groupId: string, silent = false): Promise<void> {
     if (!this.guardian.state.initialised) return;
 
     const { user } = this.guardian.state;
 
-    this.updateState({ loading: true });
+    !silent && this.updateState({ loading: true });
 
     const todos = await this.todoCollection.find(
       {
@@ -57,7 +57,7 @@ export default class ToDoModel extends Smart<IState> {
           },
         },
       },
-      { _id: 1, isDone: 1, order: 1, content: 1 }
+      { _id: 1, isDone: 1, order: 1, content: 1, groupId: 1 }
     );
 
     this.updateState({ ...this.state, todos, loading: false });
@@ -108,6 +108,7 @@ export default class ToDoModel extends Smart<IState> {
 
   public async sortTodo(todo: ToDo, position: PositionMovement): Promise<void> {
     const ID = new ObjectId(todo._id);
+    // Sort on remote
     const mutation = gql`
       mutation ToDoReorder($input: ToDoReorderInput!) {
         ToDoReorder(input: $input) {
@@ -116,7 +117,7 @@ export default class ToDoModel extends Smart<IState> {
         }
       }
     `;
-    this.client.mutate({
+    await this.client.mutate({
       mutation,
       variables: {
         input: {
@@ -126,6 +127,8 @@ export default class ToDoModel extends Smart<IState> {
         },
       },
     });
+
+    await this.fetchToDos(todo.groupId, true)
   }
 
   static getContext = () => ToDoContext;

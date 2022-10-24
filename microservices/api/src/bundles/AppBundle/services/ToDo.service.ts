@@ -65,4 +65,13 @@ export class ToDoService {
 
     return todo;
   }
+
+  public async fixOrderAfterDeletion(todoId, userId) {
+    const todoCollection = this.container.get(ToDosCollection);
+    const todo = await todoCollection.findOne(todoId);
+    await todoCollection.updateMany(
+      { order: { $gte: todo.order } },
+      { $inc: { order: -1 } }
+    );
+  }
 }

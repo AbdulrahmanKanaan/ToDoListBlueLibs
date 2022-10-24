@@ -39,6 +39,10 @@ export default {
       ToDosDeleteOne: [
         X.CheckDocumentExists(ToDosCollection),
         E.AuthorizeMutation(ToDosCollection),
+        X.ToService(ToDoService, "fixOrderAfterDeletion", (args, ctx) => [
+          args,
+          ctx.userId,
+        ]),
         X.ToDocumentDeleteByID(ToDosCollection),
       ],
       ToDoReorder: [
