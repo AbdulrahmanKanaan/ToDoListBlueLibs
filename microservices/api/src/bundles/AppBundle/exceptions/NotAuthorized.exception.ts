@@ -5,7 +5,7 @@ export interface INotAuthorizedExceptionData {
 }
 
 export class NotAuthorizedException extends Exception<INotAuthorizedExceptionData> {
-  private defaultMessage: string = `You are not authorized to do this action.`;
+  private defaultMessage = `You are not authorized to do this action.`;
 
   getMessage() {
     // Note: you have access to this.data

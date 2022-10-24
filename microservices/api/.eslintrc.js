@@ -15,6 +15,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2019,
     sourceType: "module",
+    project: ["tsconfig.json"],
   },
   rules: {
     // 0 = disabled, 1 = warning, 2 = error
@@ -25,5 +26,8 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": [0],
     "@typescript-eslint/no-empty-function": [0],
     "@typescript-eslint/no-empty-interface": [0],
+    "@typescript-eslint/no-floating-promises": [1],
+    "@typescript-eslint/ban-ts-comment": [1],
+    "no-console": [0],
   },
 };
