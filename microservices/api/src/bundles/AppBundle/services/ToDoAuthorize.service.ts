@@ -1,40 +1,73 @@
 import { ContainerInstance, Service } from "@bluelibs/core";
 import { ObjectId } from "@bluelibs/ejson";
-import { ToDosCollection } from "../collections";
+import { GroupsCollection, ToDosCollection } from "../collections";
 import { NotAuthorizedException } from "../exceptions";
+import { ResolverArguments } from "../types";
+import { GroupAuthorizeService } from "./GroupAuthorize.service";
+import { UserService } from "./User.service";
 
 @Service()
 export class ToDoAuthorizeService {
-  constructor(protected readonly container: ContainerInstance) {}
+  constructor(
+    protected readonly container: ContainerInstance,
+    protected readonly toDosCollection: ToDosCollection,
+    protected readonly usersService: UserService,
+    protected readonly groupAuthorizeService: GroupAuthorizeService
+  ) {}
 
-  public async authorizeCreate(input: AuthorizeInput) {
-    const { userId, data, message } = input;
-    if (!userId.equals(data.userId)) {
-      throw new Error(message || "Cannot insert for another user");
+  public async authorizeQuery({ userId, args }: ResolverArguments) {
+    const isAdmin = await this.usersService.isAdmin(userId);
+    const filters = args?.query?.filters ?? {};
+    const options = args?.query?.options ?? {};
+    const query = {
+      filters: {
+        ...filters,
+        ...(isAdmin ? {} : { userId }),
+      },
+      options,
+    };
+    return { query };
+  }
+
+  public async authorizeInsertion({ userId, args }: ResolverArguments) {
+    // check if the user has admin role
+    const isAdmin = await this.usersService.isAdmin(userId);
+    // check if the inserted todo belongs to the user
+    const documentUserId = args.document.userId;
+    const isTodoBelongsToUser = userId.equals(documentUserId);
+    // check if the group also belongs to the user
+    const documentGroupId = args.document.groupId;
+    const isGroupBelongsToUser = await this.groupAuthorizeService.isGroupBelongsToUser(
+      documentGroupId,
+      userId
+    );
+    // throw error JIC
+    console.log({ isAdmin, isGroupBelongsToUser, isTodoBelongsToUser });
+    if (!isAdmin && !(isTodoBelongsToUser && isGroupBelongsToUser)) {
+      throw new NotAuthorizedException({
+        message: "Cannot add a todo for another user",
+      });
     }
   }
 
-  public async authorizeUpdate(input: AuthorizeInput) {
-    this.authorizeMutation(input.userId, input.data.id);
+  public async authorizeMutation(
+    { userId, args }: ResolverArguments,
+    idResolver: (args: any) => any | Promise<any> = (args) => args._id
+  ) {
+    const isAdmin = await this.usersService.isAdmin(userId);
+    const todoId = await idResolver(args);
+    const isTodoBelongsToUser = this.isTodoBelongsToUser(todoId, userId);
+    if (!isAdmin && !isTodoBelongsToUser) {
+      throw new NotAuthorizedException({
+        message: "cannot mutate todos for another user",
+      });
+    }
   }
 
-  public async authorizeDelete(input: AuthorizeInput<{ _id: ObjectId }>) {
-    console.log(input);
-    this.authorizeMutation(input.data._id, input.userId);
-  }
-
-  private async authorizeMutation(todoId: ObjectId, userId: ObjectId) {
-    const todoCollection = this.container.get(ToDosCollection);
-    const todo = await todoCollection.findOne({
-      _id: todoId,
-    });
+  private async isTodoBelongsToUser(todoId: ObjectId, userId: ObjectId): Promise<boolean> {
+    const todo = await this.toDosCollection.findOne({ _id: todoId });
     console.log(todo);
-    throw new NotAuthorizedException(null);
+    const todoUserId = todo.userId;
+    return userId.equals(todoUserId);
   }
-}
-
-interface AuthorizeInput<T = any> {
-  data: T;
-  userId: ObjectId;
-  message?: string;
 }

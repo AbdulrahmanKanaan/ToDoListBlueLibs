@@ -1,4 +1,5 @@
 import { Service, ContainerInstance } from "@bluelibs/core";
+import { ObjectId } from "@bluelibs/ejson";
 import { Group, GroupsCollection } from "../collections";
 import { NotAuthorizedException } from "../exceptions";
 import { ResolverArguments } from "../types";
@@ -8,7 +9,7 @@ import { UserService } from "./User.service";
 export class GroupAuthorizeService {
   constructor(
     protected readonly container: ContainerInstance,
-    protected readonly collection: GroupsCollection,
+    protected readonly groupsCollection: GroupsCollection,
     protected readonly usersService: UserService
   ) {}
 
@@ -36,15 +37,19 @@ export class GroupAuthorizeService {
     }
   }
 
-  public async authorizeMutation({ args, userId }: ResolverArguments) {
+  public async authorizeMutation({ args, userId }: ResolverArguments<{ _id: ObjectId }>) {
     const isAdmin = await this.usersService.isAdmin(userId);
     const groupId = args._id;
-    const document = await this.collection.findOne({ _id: groupId });
-    const documentUserId = document.userId;
-    if (!isAdmin && !userId.equals(documentUserId)) {
+    if (!isAdmin && !(await this.isGroupBelongsToUser(groupId, userId))) {
       throw new NotAuthorizedException({
-        message: "cannot update or delete groups for another user",
+        message: "cannot mutate groups for another user",
       });
     }
+  }
+
+  public async isGroupBelongsToUser(groupId: ObjectId, userId: ObjectId): Promise<boolean> {
+    const group = await this.groupsCollection.findOne({ _id: groupId });
+    const groupUserId = group.userId;
+    return userId.equals(groupUserId);
   }
 }

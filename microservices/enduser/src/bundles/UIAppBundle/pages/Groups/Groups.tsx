@@ -25,8 +25,6 @@ export const Groups = () => {
     { _id: 1, title: 1 }
   );
 
-  groupsCollection.findOneById("6352ef65121fd250ef5fbd91", {_id: 1, userId: 1})
-
   const handleFormSubmit: AddGroupFormProps["onFormSubmit"] = async (group) => {
     groupsCollection
       .insertOne({

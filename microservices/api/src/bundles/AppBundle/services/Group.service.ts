@@ -5,7 +5,7 @@ import { ValidatorService } from "@bluelibs/validator-bundle";
 import { Group, GroupsCollection } from "../collections";
 import { ResolverArguments } from "../types";
 import { GroupInsertInput, GroupUpdateInput } from "./inputs";
-import { UserService } from "./User.service";
+import { UserService } from ".";
 
 @Service()
 export class GroupService {
@@ -18,7 +18,7 @@ export class GroupService {
   ) {}
 
   public async findOne({ args, ast, carry }: ResolverArguments) {
-    const query = carry && "query" in carry ? carry.query : args;
+    const query = this.extractQuery({ args, carry });
     const group = await this.groupsCollection.queryOneGraphQL(ast, query);
     if (!group) {
       throw new DocumentNotFoundException();
@@ -27,13 +27,13 @@ export class GroupService {
   }
 
   public async find({ args, ast, carry }: ResolverArguments) {
-    const query = carry && "query" in carry ? carry.query : args;
+    const query = this.extractQuery({ args, carry });
     const userGroups = await this.groupsCollection.queryGraphQL(ast, query);
     return userGroups;
   }
 
   public async count({ args, carry }: ResolverArguments) {
-    const query = carry && "query" in carry ? carry.query : args;
+    const query = this.extractQuery({ args, carry });
     const userGroups = await this.groupsCollection.count(query.filters, query.options);
     return userGroups;
   }
@@ -85,5 +85,10 @@ export class GroupService {
       },
     });
     return group;
+  }
+
+  private extractQuery({ carry, args }) {
+    const query = carry && "query" in carry ? carry.query : args;
+    return query;
   }
 }
