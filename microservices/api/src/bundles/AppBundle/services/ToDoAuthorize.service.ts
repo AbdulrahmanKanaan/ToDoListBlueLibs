@@ -8,7 +8,6 @@ export class ToDoAuthorizeService {
   constructor(protected readonly container: ContainerInstance) {}
 
   public async authorizeCreate(input: AuthorizeInput) {
-    console.log(input);
     const { userId, data, message } = input;
     if (!userId.equals(data.userId)) {
       throw new Error(message || "Cannot insert for another user");

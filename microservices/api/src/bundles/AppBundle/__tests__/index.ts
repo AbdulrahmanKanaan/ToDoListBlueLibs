@@ -1,3 +1,4 @@
+import "./User.service.test.ts";
 import "./GroupAuthorize.service.test.ts";
 import "./ToDoAuthorize.service.test.ts";
 import "./ToDo.service.test.ts";

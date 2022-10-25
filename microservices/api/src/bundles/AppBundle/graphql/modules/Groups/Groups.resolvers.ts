@@ -1,52 +1,45 @@
-import * as X from "@bluelibs/x-bundle";
 import { IResolverMap } from "@bluelibs/graphql-bundle";
-import { GroupInsertInput, GroupUpdateInput } from "../../../services/inputs";
-import { GroupsCollection } from "../../../collections/Groups/Groups.collection";
+import * as X from "@bluelibs/x-bundle";
 import { GroupService } from "@bundles/AppBundle/services/Group.service";
-import * as E from "@bundles/AppBundle/executors";
+import { GroupAuthorizeService } from "@bundles/AppBundle/services/GroupAuthorize.service";
+import { argumentsMapper } from "@bundles/AppBundle/utils";
+import { GroupsCollection } from "../../../collections/Groups/Groups.collection";
 
 true;
 export default {
   Query: [
     [],
     {
-      GroupsFindOne: [X.ToNovaOne(GroupsCollection)],
-      // GroupsFind: [
-      //   X.ToNova(GroupsCollection, (_, args, ctx, info) => ({
-      //     filters: {
-      //       userId: ctx.userId,
-      //     },
-      //   })),
-      // ],
-      GroupsFind: [
-        X.ToService(GroupService, "find", (args, ctx) => [args, ctx.userId]),
+      GroupsFindOne: [
+        X.ToService(GroupAuthorizeService, "authorizeQuery", argumentsMapper()),
+        X.ToService(GroupService, "findOne", argumentsMapper()),
       ],
-      GroupsCount: [X.ToCollectionCount(GroupsCollection)],
+      GroupsFind: [
+        X.ToService(GroupAuthorizeService, "authorizeQuery", argumentsMapper()),
+        X.ToService(GroupService, "find", argumentsMapper()),
+      ],
+      GroupsCount: [
+        X.ToService(GroupAuthorizeService, "authorizeQuery", argumentsMapper()),
+        X.ToService(GroupService, "count", argumentsMapper()),
+      ],
     },
   ],
   Mutation: [
     [],
     {
       GroupsInsertOne: [
-        E.AuthorizeInsertion({ message: "Cannot add a group for another user" }),
-        X.ToModel(GroupInsertInput, { field: "document" }),
-        X.Validate({ field: "document" }),
-        X.ToDocumentInsert(GroupsCollection),
-        X.ToNovaByResultID(GroupsCollection),
+        X.ToService(GroupAuthorizeService, "authorizeInsertion", argumentsMapper()),
+        X.ToService(GroupService, "insertOne", argumentsMapper()),
       ],
       GroupsUpdateOne: [
-        X.ToModel(GroupUpdateInput, { field: "document" }),
-        X.Validate({ field: "document" }),
-        X.CheckDocumentExists(GroupsCollection),
-        // @ts-ignore
-        X.ToDocumentUpdateByID(GroupsCollection, null, ({ document }) => ({
-          $set: document,
-        })),
-        X.ToNovaByResultID(GroupsCollection),
+        X.ToService(GroupService, "checkGroupExists", argumentsMapper()),
+        X.ToService(GroupAuthorizeService, "authorizeMutation", argumentsMapper()),
+        X.ToService(GroupService, "updateOne", argumentsMapper()),
       ],
       GroupsDeleteOne: [
-        X.CheckDocumentExists(GroupsCollection),
-        X.ToDocumentDeleteByID(GroupsCollection),
+        X.ToService(GroupService, "checkGroupExists", argumentsMapper()),
+        X.ToService(GroupAuthorizeService, "authorizeMutation", argumentsMapper()),
+        X.ToService(GroupService, "deleteOne", argumentsMapper()),
       ],
     },
   ],

@@ -2,7 +2,7 @@ import * as X from "@bluelibs/x-bundle";
 import { IResolverMap } from "@bluelibs/graphql-bundle";
 import { ToDoInsertInput, ToDoUpdateInput } from "../../../services/inputs";
 import { ToDosCollection } from "../../../collections/ToDos/ToDos.collection";
-import { ToDoAuthorizeService, ToDoService } from "@bundles/AppBundle/services";
+import { ToDoService } from "@bundles/AppBundle/services";
 import * as E from "@bundles/AppBundle/executors";
 
 true;

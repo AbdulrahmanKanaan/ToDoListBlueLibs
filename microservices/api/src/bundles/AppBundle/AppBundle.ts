@@ -8,7 +8,7 @@ import graphqlModule from "./graphql";
 
 export class AppBundle extends BaseBundle<any> {
   async prepare() {
-    this.setupBundle({
+    await this.setupBundle({
       listeners,
       collections,
       validators,

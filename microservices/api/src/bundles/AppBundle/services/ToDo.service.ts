@@ -1,6 +1,5 @@
 import {
   Service,
-  Inject,
   EventManager,
   ContainerInstance,
 } from "@bluelibs/core";
@@ -8,9 +7,11 @@ import { ToDosCollection } from "../collections";
 
 @Service()
 export class ToDoService {
+
   constructor(
     protected readonly container: ContainerInstance,
-    protected readonly eventManager: EventManager
+    protected readonly eventManager: EventManager,
+    protected readonly todoCollection: ToDosCollection
   ) {}
 
   public async reorder(input, userId) {
@@ -66,12 +67,16 @@ export class ToDoService {
     return todo;
   }
 
-  public async fixOrderAfterDeletion(todoId, userId) {
+  public async fixOrderAfterDeletion(todoId) {
     const todoCollection = this.container.get(ToDosCollection);
     const todo = await todoCollection.findOne(todoId);
     await todoCollection.updateMany(
       { order: { $gte: todo.order } },
       { $inc: { order: -1 } }
     );
+  }
+
+  public async find (args, userId) {
+    console.log(this.todoCollection)
   }
 }
