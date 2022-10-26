@@ -60,7 +60,7 @@ export default class ToDoModel extends Smart<IState> {
       { _id: 1, isDone: 1, order: 1, content: 1, groupId: 1 }
     );
 
-    this.updateState({ ...this.state, todos, loading: false });
+    this.updateState({ todos, loading: false });
   }
 
   public async createToDo(todo: Partial<ToDo>): Promise<void> {
@@ -128,7 +128,7 @@ export default class ToDoModel extends Smart<IState> {
       },
     });
 
-    await this.fetchToDos(todo.groupId, true)
+    await this.fetchToDos(todo.groupId, true);
   }
 
   static getContext = () => ToDoContext;

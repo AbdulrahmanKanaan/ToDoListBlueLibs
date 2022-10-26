@@ -66,10 +66,6 @@ const ToDos: React.FunctionComponent<any> = ({ id: groupId }) => {
     api.fetchToDos(groupId);
   }, [api, groupId]);
 
-  useEffect(() => {
-    console.log(todos);
-  }, [todos]);
-
   return (
     <>
       <Layout>

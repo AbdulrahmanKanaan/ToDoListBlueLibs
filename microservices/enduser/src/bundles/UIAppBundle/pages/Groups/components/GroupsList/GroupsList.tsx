@@ -1,5 +1,5 @@
 import { Group } from "@root/api.types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { GroupItem } from "..";
 import "./GroupsList.scss";
@@ -16,18 +16,15 @@ const GroupsList: React.FC<Props> = ({ groups, onGroupPress }) => {
 
   const [isDragging, setIsDragging] = useState(false);
 
-  const onSortDone = ({ oldIndex, newIndex }) => {
-    // JUST FOR TESTING :)
-    // SORTABLE LIST IS ONLY IMPLEMENTED IN THE TODO LIST
-    console.log(`${oldIndex} => ${newIndex}`);
-  };
+  useEffect(() => {
+    setGroupsList(groups.map((group) => ({ ...group, id: group._id })));
+  }, [groups]);
 
   return (
     <>
       <ReactSortable
         list={groupsList}
         setList={setGroupsList}
-        onSort={onSortDone}
         className="grid-container"
         ghostClass="group-drop-area"
         handle=".drag-handle"
