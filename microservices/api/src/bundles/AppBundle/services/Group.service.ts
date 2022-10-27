@@ -6,6 +6,7 @@ import { Group, GroupsCollection } from "../collections";
 import { ResolverArguments } from "../types";
 import { GroupInsertInput, GroupUpdateInput } from "./inputs";
 import { UserService } from ".";
+import { GroupDeletedEvent } from "../events";
 
 @Service()
 export class GroupService {
@@ -53,26 +54,20 @@ export class GroupService {
     const { document, _id: groupId } = args;
     const model = toModel(GroupUpdateInput, document);
     await this.validatorService.validate(model);
-    await this.groupsCollection.updateOne(
-      { _id: groupId },
-      { $set: document },
-      { context: { userId } }
-    );
+    await this.groupsCollection.updateOne({ _id: groupId }, { $set: document }, { context: { userId } });
     return await this.getGroupByResultId(groupId, ast);
   }
 
   public async deleteOne({ args, userId }: ResolverArguments) {
     const { _id: groupId } = args;
     const result = await this.groupsCollection.deleteOne({ _id: groupId }, { context: { userId } });
+    await this.eventManager.emit(new GroupDeletedEvent({ groupId, userId }));
     return result.acknowledged;
   }
 
   public async checkGroupExists({ args }: ResolverArguments<{ _id: ObjectId }>): Promise<void> {
     const { _id: groupId } = args;
-    const isExists = !!(await this.groupsCollection.findOne(
-      { _id: groupId },
-      { projection: { _id: 1 } }
-    ));
+    const isExists = !!(await this.groupsCollection.findOne({ _id: groupId }, { projection: { _id: 1 } }));
     if (!isExists) {
       throw new DocumentNotFoundException();
     }

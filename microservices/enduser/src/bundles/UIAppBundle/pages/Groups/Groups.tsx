@@ -6,6 +6,7 @@ import { Card, message, Space } from "antd";
 import { TODOS } from "../routes";
 import { AddGroupForm, GroupsList } from "./components";
 import { GroupsModel } from "./models";
+import { ObjectId } from "@bluelibs/ejson";
 
 type AddGroupFormProps = React.ComponentProps<typeof AddGroupForm>;
 
@@ -25,6 +26,20 @@ const Groups: React.FunctionComponent<any> = (props) => {
 
   const onGroupPress = (groupId: string) => {
     router.go(TODOS, { params: { id: groupId } });
+  };
+
+  const onGroupDelete = async (groupId: string) => {
+    api
+      .deleteGroup(groupId)
+      .then(() => message.warn("Group deleted!"))
+      .catch((err) => message.error(err.message));
+  };
+
+  const onGroupEdit = async (groupId: string, title: string) => {
+    api
+      .editGroup(groupId, title)
+      .then(() => message.warn("Group updated!"))
+      .catch((err) => message.error(err.message));
   };
 
   useEffect(() => {
@@ -55,7 +70,12 @@ const Groups: React.FunctionComponent<any> = (props) => {
             {loading ? (
               <Spinner spinning tip={"Loading groups"} />
             ) : (
-              <GroupsList groups={groups} onGroupPress={onGroupPress} />
+              <GroupsList
+                groups={groups}
+                onGroupPress={onGroupPress}
+                onGroupDelete={onGroupDelete}
+                onGroupEdit={onGroupEdit}
+              />
             )}
           </Card>
         </Space>

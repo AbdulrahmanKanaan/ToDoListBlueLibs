@@ -2,14 +2,22 @@ import { Group } from "@root/api.types";
 import React, { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { GroupItem } from "..";
+
 import "./GroupsList.scss";
 
 interface Props {
   groups: Group[];
   onGroupPress(groupId: string): void;
+  onGroupDelete(groupId: string): Promise<void>;
+  onGroupEdit(groupId: string, title: string): Promise<void>;
 }
 
-const GroupsList: React.FC<Props> = ({ groups, onGroupPress }) => {
+const GroupsList: React.FC<Props> = ({
+  groups,
+  onGroupPress,
+  onGroupDelete,
+  onGroupEdit,
+}) => {
   const [groupsList, setGroupsList] = useState(
     groups.map((group) => ({ ...group, id: group._id }))
   );
@@ -36,6 +44,8 @@ const GroupsList: React.FC<Props> = ({ groups, onGroupPress }) => {
           <GroupItem
             key={item.id}
             onPress={() => onGroupPress(item._id.toString())}
+            onDelete={() => onGroupDelete(item._id)}
+            onEdit={(title) => onGroupEdit(item._id, title)}
             hoverable={!isDragging}
             group={item}
           />
